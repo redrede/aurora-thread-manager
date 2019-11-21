@@ -23,23 +23,21 @@ package com.redrede.aurora.thread.manager;
 public class SampleTask extends Task {
 
     public SampleTask() {
-        super("Sample", new TaskContext(), 10l);
+        super("Sample", new TaskContext(), 1000l);
     }
 
     @Override
     public void execute() throws InterruptedException {
-        long o = 0;        
-        while(!this.isInterrupt() && o < 1_000_000_000){
-            o+=1*(1/1);      
-            if (this.isInterrupt()){
-                System.out.println(this.getId() + " isInterrupt + " + o + " interr: "+  this.isInterrupt());
-            }
+        long o = 0;
+        while (!this.isInterrupt() && o < 1_000_000_000) {
+            o += 1 * (1 / 1);            
         }
-        if (!this.isInterrupt()){        
-            System.out.println(this.getId() + " done + " + o + " interr: "+  this.isInterrupt());
+        if (!this.isInterrupt()) {
+            System.out.println(this.getId() + " done + " + o + " interr: " + this.isInterrupt());
+        } else {
+            System.out.println(this.getId() + " isInterrupt + " + o + " interr: " + this.isInterrupt());
         }
-        
-        
+
     }
 
 }

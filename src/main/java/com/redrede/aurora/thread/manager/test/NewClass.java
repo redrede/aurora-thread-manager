@@ -17,6 +17,7 @@
 package com.redrede.aurora.thread.manager.test;
 
 import com.redrede.aurora.thread.manager.SampleTask;
+import com.redrede.aurora.thread.manager.TaskMonitor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -31,14 +32,20 @@ public class NewClass {
 
     public static void main(String[] args) {
         try {
+            //try {
             ExecutorService executor = Executors.newFixedThreadPool(10);
-            for (int i = 1; i < 1000; i++) {
+            for (int i = 1; i < 10; i++) {
                 executor.execute(new SampleTask());
             }
             String name = Thread.currentThread().getName();
+            Thread.sleep(11000l);
             System.out.println("Done: " + name);
-            executor.awaitTermination(1, TimeUnit.SECONDS);
+            TaskMonitor.getInstance().stopMonitor();            
+            //executor.awaitTermination(1, TimeUnit.SECONDS);
             executor.shutdown();
+            //} catch (InterruptedException ex) {
+            //    Logger.getLogger(NewClass.class.getName()).log(Level.SEVERE, null, ex);
+            //}
         } catch (InterruptedException ex) {
             Logger.getLogger(NewClass.class.getName()).log(Level.SEVERE, null, ex);
         }

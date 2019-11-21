@@ -33,12 +33,12 @@ public abstract class Task implements Runnable, Delayed {
     private final Long maximumDuration;
 
     private Long finishTime;
-    
+
     private Long startTime;
 
     private Thread worker;
 
-    private boolean interrupt = false;
+    private volatile boolean interrupt = false;
 
     public Long getDuration() {
         return System.currentTimeMillis() - startTime;
@@ -66,7 +66,7 @@ public abstract class Task implements Runnable, Delayed {
         try {
             this.execute();
         } catch (InterruptedException ex) {
-            System.err.println("Err: " + ex.getMessage() + " id: "+ this.getId());
+            System.err.println("Err: " + ex.getMessage() + " id: " + this.getId());
         } finally {
             endTask();
         }
@@ -82,7 +82,7 @@ public abstract class Task implements Runnable, Delayed {
     protected void interrupt() {
         this.interrupt = true;
         this.worker.interrupt();
-        System.out.println("Interrupt " + this.getName() + " id: " + this.getId() + " thread: " + this.worker.getName() + " duration:" + this.getDuration() );
+        System.out.println("Interrupt " + this.getName() + " id: " + this.getId() + " thread: " + this.worker.getName() + " duration:" + this.getDuration());
     }
 
     private void endTask() {

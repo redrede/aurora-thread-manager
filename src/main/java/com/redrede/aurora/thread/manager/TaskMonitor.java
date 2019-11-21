@@ -36,15 +36,36 @@ public class TaskMonitor implements Runnable {
 
     private final BlockingQueue<Task> RUNNING_TASKS = new DelayQueue<>();
     private final AtomicLong UNIQUE_KEYS = new AtomicLong();
+    private static ExecutorService executor;
 
-    private boolean interrupt = false;
+    private static Boolean started;
+    private static Thread worker;
+
+    private volatile boolean interrupt = false;
 
     private TaskMonitor() {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(this);
+        started = false;
+    }
+    
+    public void stopMonitor(){
+        interrupt = true;
+        worker.interrupt();
+        executor.shutdown();
+    }
+
+    private static void startThread() {
+        executor = Executors.newSingleThreadExecutor();
+        executor.execute(INSTANCE);
+        started = true;
+        LOG.log(Level.INFO, "start thread monitor");
     }
 
     public static TaskMonitor getInstance() {
+        if (!started) {
+            synchronized (started) {
+                startThread();
+            }
+        }
         return INSTANCE;
     }
 
@@ -65,8 +86,8 @@ public class TaskMonitor implements Runnable {
     }
 
     @Override
-    public void run() {
-        LOG.log(Level.INFO, "start thread timeout");
+    public void run() {       
+        worker = Thread.currentThread();
         while (!interrupt) {
             try {
                 Task taskTimeout = timeoutTask();
